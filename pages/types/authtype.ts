@@ -1,12 +1,13 @@
 export type signUpUserInfoTypes = {
   firstName: string;
   lastName: string;
-  email: string;
-  password: string;
   months: string;
   days: string;
   year: string;
   gender: string;
+  friendsNumber: number;
+  profileimg: string;
+  coverimg: string;
 };
 
 export type AuthinputsProps = {

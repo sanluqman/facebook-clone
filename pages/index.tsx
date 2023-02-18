@@ -1,17 +1,44 @@
 import Head from "next/head";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { auth } from "./firebase";
-import { useEffect } from "react";
+import { auth, firestore, storage } from "./firebase";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Nav from "./components/nav/Nav";
+import Home_left from "./components/Home/Home_left";
+import Home_main from "./components/Home/Home_main";
+import Home_right from "./components/Home/Home_right";
+import { doc, getDoc } from "firebase/firestore";
+import { signUpUserInfoTypes } from "./types/authtype";
 
 export default function Home() {
   const router = useRouter();
   const [signOut, loadingSignOut, errorSignOut] = useSignOut(auth);
   const [user, loading, error] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useState<signUpUserInfoTypes | null>(null);
+
+  const getUserInformation = async () => {
+    if (user) {
+      const docRef = doc(firestore, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUserInfo(docSnap.data() as signUpUserInfoTypes);
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }
+  };
 
   useEffect(() => {
     if (!user) {
       router.push("/auth");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      getUserInformation();
     }
   }, [user]);
 
@@ -23,7 +50,31 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <button
+      <Nav />
+      <div className="flex justify-between align-middle bg-[#F0F2F5] h-screen">
+        <div className="hidden md:w-1/3 md:flex md:justify-start">
+          {userInfo && <Home_left userInfo={userInfo} />}
+        </div>
+        <div className="w-[80%] justify-center md:w-1/2 ml-auto mr-auto overflow-y-scroll ">
+          {userInfo && user && (
+            <Home_main
+              userInfo={userInfo}
+              user={user}
+              storage={storage}
+              firestore={firestore}
+            />
+          )}
+        </div>
+        <div className="hidden  md:w-1/3 md:flex md:justify-end">
+          <Home_right />
+        </div>
+      </div>
+    </>
+  );
+}
+
+{
+  /* <button
         onClick={async () => {
           const success = await signOut();
           if (success) {
@@ -32,7 +83,5 @@ export default function Home() {
         }}
       >
         Sign out
-      </button>
-    </>
-  );
+      </button> */
 }

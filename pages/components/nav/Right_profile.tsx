@@ -1,0 +1,31 @@
+import React, { useState } from "react";
+import Menu from "./navrightsidemodels/Menu";
+import { TbGridDots } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
+import Profile from "./navrightsidemodels/Profile";
+
+type nav_profileProps = {};
+
+const Nav_profile: React.FC<nav_profileProps> = () => {
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
+  return (
+    <div className="w-1/3  flex justify-end align-middle ">
+      <button
+        onClick={() => setOpenMenu((prev) => !prev)}
+        className="bg-[#F0F2F5] rounded-full text-2xl p-1 font-bold mr-2"
+      >
+        <TbGridDots className="" />
+      </button>
+      <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} />
+      <button
+        onClick={() => setOpenProfile((prev) => !prev)}
+        className="bg-[#F0F2F5] rounded-full text-2xl p-1 font-bold mr-2"
+      >
+        <CgProfile />
+      </button>
+      <Profile openProfile={openProfile} setOpenProfile={setOpenProfile} />
+    </div>
+  );
+};
+export default Nav_profile;

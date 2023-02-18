@@ -15,6 +15,9 @@ const page: React.FC<pageProps> = () => {
     days: "",
     year: "",
     gender: "",
+    friendsNumber: 0,
+    profileimg: "",
+    coverimg: "",
   });
   return (
     <>

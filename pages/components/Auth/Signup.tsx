@@ -3,7 +3,7 @@ import Authinputs from "./Authinputs";
 import Birthdayinputs from "./Birthdayinputs";
 import Genderinput from "./Genderinput";
 import Terms from "./Terms";
-import { signUpUserInfoTypes } from "./authtype";
+import { signUpUserInfoTypes } from "../../types/authtype";
 import { Auth } from "firebase/auth";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";

@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthinputsProps } from "./authtype";
+import { AuthinputsProps } from "../../types/authtype";
 
 const Genderinput: React.FC<AuthinputsProps> = ({
   setSignUpUserInfo,

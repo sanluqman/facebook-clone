@@ -1,7 +1,7 @@
 import { Auth } from "firebase/auth";
 import React, { useState } from "react";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
-import { signUpUserInfoTypes } from "./authtype";
+import { signUpUserInfoTypes } from "../../types/authtype";
 
 type ForgetpasswordProps = {
   openModel: boolean;

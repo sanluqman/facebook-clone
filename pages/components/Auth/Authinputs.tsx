@@ -1,6 +1,6 @@
 import React from "react";
-import { signUpUserInfoTypes } from "./authtype";
-import { AuthinputsProps } from "./authtype";
+import { signUpUserInfoTypes } from "../../types/authtype";
+import { AuthinputsProps } from "../../types/authtype";
 
 type emailandpassword = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;

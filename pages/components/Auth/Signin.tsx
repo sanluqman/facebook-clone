@@ -4,7 +4,7 @@ import {
   useAuthState,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { signUpUserInfoTypes } from "./authtype";
+import { signUpUserInfoTypes } from "../../types/authtype";
 import { useRouter } from "next/router";
 import Forgetpassword from "./Forgetpassword";
 
