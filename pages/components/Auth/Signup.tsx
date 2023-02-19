@@ -7,7 +7,7 @@ import { signUpUserInfoTypes } from "../../types/authtype";
 import { Auth } from "firebase/auth";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
 
 type SignupProps = {
@@ -43,7 +43,9 @@ const Signup: React.FC<SignupProps> = ({
       const success = !!setDoc(
         doc(firestore, "users", user!.user.uid),
         signUpUserInfo
-      );
+      ).then(() => {
+        addDoc(collection(firestore, "users", user!.user.uid, "likes"), {});
+      });
 
       if (success) {
         router.push("/");

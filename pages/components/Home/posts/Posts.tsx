@@ -11,6 +11,7 @@ import {
   doc,
   increment,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { CgProfile } from "react-icons/cg";
 import { GrLike } from "react-icons/gr";
@@ -43,57 +44,61 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
   // let getingLikedPost;
 
   const onLikePost = async (postid: string) => {
-    console.log("function run");
+    // geting refrense
     const getingPostQuery = query(
       collection(firestore, "users", user.uid, "likes")
     );
+    // get data
     const querySnapshot = await getDocs(getingPostQuery);
+
     let post: any;
     querySnapshot.forEach((doc) => {
       post = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
 
+    let likepostindex, likedpostid;
+    if (post) {
+      post.filter((likedPost: any, i: number) => {
+        if (likedPost.likedPost === postid) {
+          likepostindex = i;
+          likedpostid = likedPost;
+        }
+      });
+      var ifUserLikedPost = post.some(
+        (likedPost: any) => likedPost.likedpost === postid
+      );
+    }
+
     const updateDocRef = doc(firestore, "posts", postid);
 
-    if (post) {
-      const ifUserLikedPost = post.some(
-        (likedPost: any) => likedPost.likedPost === postid
+    if (likedpostid || likepostindex) {
+      // delete likes
+      const deleteDocRef = doc(
+        firestore,
+        `users/${user.uid}/likes`,
+        likedpostid.id
       );
-      const userscollectionpostid = post.filter(
-        (likedPost: any) => likedPost.likedPost === postid
-      );
 
-      if (ifUserLikedPost && userscollectionpostid) {
-        // delete likes
-        console.log(post);
-        const deleteDocRef = doc(
-          firestore,
-          `users/${user.uid}/likes`,
-          userscollectionpostid[0].id
-        );
+      deleteDoc(deleteDocRef).then(() => {
+        console.log("deleted");
+      });
 
-        deleteDoc(deleteDocRef).then(() => {
-          console.log("deleted");
-        });
+      updateDoc(updateDocRef, {
+        numberOfLikes: increment(-1),
+      }).then(() => {
+        console.log("remove like");
+      });
+    } else {
+      // add likes
+      await addDoc(collection(firestore, "users", user.uid, "likes"), {
+        likedPost: postid,
+      });
 
-        updateDoc(updateDocRef, {
-          numberOfLikes: increment(-1),
-        }).then(() => {
-          console.log("remove like");
-        });
-      } else {
-        // add likes
-        console.log("adding like");
-        await addDoc(collection(firestore, "users", user.uid, "likes"), {
-          likedPost: postid,
-        });
-
-        updateDoc(updateDocRef, {
-          numberOfLikes: increment(1),
-        }).then(() => {
-          console.log("updated");
-        });
-      }
+      updateDoc(updateDocRef, {
+        numberOfLikes: increment(1),
+      }).then(() => {
+        console.log("updated");
+      });
     }
   };
 
@@ -109,6 +114,7 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
     querySnapshot.forEach((doc) => {
       post = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
+
     if (post) {
       setPosts(post);
     }
@@ -118,10 +124,8 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
     getHomePagePosts();
   }, []);
 
-  // console.log(posts);
-
   return (
-    <div className="">
+    <div className="mb-14">
       {posts &&
         posts.map((post) => {
           return (
