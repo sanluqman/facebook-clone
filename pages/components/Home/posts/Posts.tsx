@@ -18,6 +18,9 @@ import { GrLike } from "react-icons/gr";
 import { GoComment } from "react-icons/go";
 import { RiShareForwardLine } from "react-icons/ri";
 import { User } from "firebase/auth";
+import Addcomment from "../comment/Addcomment";
+import moment from "moment";
+import Allcommentsmodel from "../comment/Allcommentsmodel";
 
 type PostsProps = {
   firestore: any;
@@ -41,7 +44,25 @@ type postType = [
 
 const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
   const [posts, setPosts] = useState<postType | null>(null);
-  // let getingLikedPost;
+  const [openCommentsModel, setOpenCommentsModel] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [postUrl, setPostUrl] = useState("");
+  const [postid, setPostid] = useState("");
+  const [userProfile, setUserProfile] = useState("");
+
+  const openingCommentDetailModel = (
+    postUserName: string,
+    postImage: string,
+    postid: string
+    // userProfile:string
+  ) => {
+    setUserName(postUserName);
+    setPostUrl(postImage);
+    setPostid(postid);
+    // setUserProfile(userProfile)
+
+    setOpenCommentsModel((prev) => !prev);
+  };
 
   const onLikePost = async (postid: string) => {
     // geting refrense
@@ -56,22 +77,18 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
       post = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
 
-    let likepostindex, likedpostid;
+    let likedpostid;
     if (post) {
-      post.filter((likedPost: any, i: number) => {
+      post.filter((likedPost: any) => {
         if (likedPost.likedPost === postid) {
-          likepostindex = i;
           likedpostid = likedPost;
         }
       });
-      var ifUserLikedPost = post.some(
-        (likedPost: any) => likedPost.likedpost === postid
-      );
     }
 
     const updateDocRef = doc(firestore, "posts", postid);
 
-    if (likedpostid || likepostindex) {
+    if (likedpostid) {
       // delete likes
       const deleteDocRef = doc(
         firestore,
@@ -140,8 +157,16 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                   ) : (
                     <CgProfile className="text-4xl mr-2 mt-1" />
                   )}
-                  <h1 className="font-semibold">{post.profileName}</h1>
+                  <div className="flex flex-col">
+                    <h1 className="font-semibold">{post.profileName}</h1>
+                    <h1 className="text-gray-400 text-sm">
+                      {moment(
+                        new Date(post.createdAt.seconds * 1000)
+                      ).fromNow()}
+                    </h1>
+                  </div>
                 </div>
+
                 <div className="flex text-gray-400 align-middle justify-center">
                   <div className="pr-1">...</div>
                   <div className="pl-1 text-2xl font-light">x</div>
@@ -156,7 +181,17 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
               </div>
               <div className="flex justify-between align-middle p-3">
                 <h1>{post.numberOfLikes} Likes</h1>
-                <div className="flex ">
+                <div
+                  className="flex "
+                  onClick={() =>
+                    openingCommentDetailModel(
+                      post.profileName,
+                      post.imageURL,
+                      post.id
+                      // post.profilrImageUrl
+                    )
+                  }
+                >
                   <h1>{post.numberOfComments}</h1>{" "}
                   <h1>
                     <GoComment className="text-xl pt-1 pl-1" />
@@ -175,9 +210,38 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                   <RiShareForwardLine className="text-xl pr-1" /> share
                 </div>
               </div>
+              <div className="m-3 ">
+                <h1
+                  onClick={() =>
+                    openingCommentDetailModel(
+                      post.profileName,
+                      post.imageURL,
+                      post.id
+                      // post.profilrImageUrl
+                    )
+                  }
+                >
+                  view more comments
+                </h1>
+                <Addcomment
+                  userProfileImg={post.profilrImageUrl}
+                  userName={post.profileName}
+                  postid={post.id}
+                  userProfile={userProfile}
+                />
+              </div>
             </div>
           );
         })}
+      {openCommentsModel && (
+        <Allcommentsmodel
+          userName={userName}
+          setOpenCommentsModel={setOpenCommentsModel}
+          postUrl={postUrl}
+          postid={postid}
+          // userProfile={userProfile}
+        />
+      )}
     </div>
   );
 };
