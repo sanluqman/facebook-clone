@@ -13,12 +13,15 @@ import { CgProfile } from "react-icons/cg";
 import { GoComment } from "react-icons/go";
 import { GrLike } from "react-icons/gr";
 import { RiShareForwardLine } from "react-icons/ri";
+import Addcomment from "./Addcomment";
+import moment from "moment";
 
 type AllcommentsmodelProps = {
   userName: string;
   setOpenCommentsModel: React.Dispatch<React.SetStateAction<boolean>>;
   postUrl: string;
   postid: string;
+  userProfile: string;
 };
 
 type commentsType = [
@@ -37,6 +40,7 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
   setOpenCommentsModel,
   postUrl,
   postid,
+  userProfile,
 }) => {
   const [comments, setComments] = useState<commentsType | null>(null);
   const getPostComments = async () => {
@@ -109,12 +113,12 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
             </div>
           </div>
           {/* <!-- Modal footer --> */}
-          <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-            <div className=" mb-10">
+          <div className="flex flex-col  p-6 space-x-2 border-t border-gray-200 rounded-b ">
+            <div className=" mb-10 ">
               {comments &&
                 comments.map((comment) => {
                   return (
-                    <div className="flex mb-2 ">
+                    <div className="flex mb-2 " key={comment.id}>
                       {comment.userProfile ? (
                         <img
                           src={comment.userProfile}
@@ -123,13 +127,28 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
                       ) : (
                         <CgProfile className="text-4xl mr-2 mt-1" />
                       )}
-                      <div className="flex flex-col bg-[#F0F2F5] rounded-lg py-1 px-3">
-                        <h1>{comment.userName}</h1>
-                        <h1>{comment.comment}</h1>
+                      <div className="flex flex-col  ">
+                        <div className="bg-[#F0F2F5] rounded-lg py-1 px-3">
+                          <h1>{comment.userName}</h1>
+                          <h1>{comment.comment}</h1>
+                        </div>
+                        <p className="text-xs">
+                          {moment(
+                            new Date(comment.createdAt.seconds * 1000)
+                          ).fromNow()}
+                        </p>
                       </div>
                     </div>
                   );
                 })}
+            </div>
+            <div className="">
+              <Addcomment
+                userProfileImg={userProfile}
+                userName={userName}
+                postid={postid}
+                userProfile={userProfile}
+              />
             </div>
           </div>
         </div>

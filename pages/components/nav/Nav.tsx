@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import NavLogoSearch from "./Left_logo";
 import NavIcons from "./Midle_icons";
 import Nav_profile from "./Right_profile";
+import { signUpUserInfoTypes } from "@/pages/types/authtype";
 
-type NavProps = {};
+type NavProps = {
+  allUsers: any;
+};
 
-const Nav: React.FC<NavProps> = () => {
+const Nav: React.FC<NavProps> = ({ allUsers }) => {
   const [activeIcone, setActiveIcone] = useState("home");
 
   return (
     <div className="flex p-2 bg-white shadow-md h-[9vh]">
-      <NavLogoSearch />
+      <NavLogoSearch allUsers={allUsers} />
       <NavIcons activeIcone={activeIcone} setActiveIcone={setActiveIcone} />
       <Nav_profile />
     </div>

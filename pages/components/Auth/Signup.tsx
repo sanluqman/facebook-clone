@@ -45,6 +45,7 @@ const Signup: React.FC<SignupProps> = ({
         signUpUserInfo
       ).then(() => {
         addDoc(collection(firestore, "users", user!.user.uid, "likes"), {});
+        addDoc(collection(firestore, "users", user!.user.uid, "friends"), {});
       });
 
       if (success) {

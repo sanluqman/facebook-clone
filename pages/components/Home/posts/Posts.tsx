@@ -53,13 +53,13 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
   const openingCommentDetailModel = (
     postUserName: string,
     postImage: string,
-    postid: string
-    // userProfile:string
+    postid: string,
+    userProfile: string
   ) => {
     setUserName(postUserName);
     setPostUrl(postImage);
     setPostid(postid);
-    // setUserProfile(userProfile)
+    setUserProfile(userProfile);
 
     setOpenCommentsModel((prev) => !prev);
   };
@@ -187,8 +187,8 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                     openingCommentDetailModel(
                       post.profileName,
                       post.imageURL,
-                      post.id
-                      // post.profilrImageUrl
+                      post.id,
+                      post.profilrImageUrl
                     )
                   }
                 >
@@ -216,8 +216,8 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                     openingCommentDetailModel(
                       post.profileName,
                       post.imageURL,
-                      post.id
-                      // post.profilrImageUrl
+                      post.id,
+                      post.profilrImageUrl
                     )
                   }
                 >
@@ -239,7 +239,7 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
           setOpenCommentsModel={setOpenCommentsModel}
           postUrl={postUrl}
           postid={postid}
-          // userProfile={userProfile}
+          userProfile={userProfile}
         />
       )}
     </div>

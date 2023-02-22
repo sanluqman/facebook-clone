@@ -7,7 +7,7 @@ import Nav from "./components/nav/Nav";
 import Home_left from "./components/Home/Home_left";
 import Home_main from "./components/Home/Home_main";
 import Home_right from "./components/Home/Home_right";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { signUpUserInfoTypes } from "./types/authtype";
 
 export default function Home() {
@@ -15,6 +15,7 @@ export default function Home() {
   const [signOut, loadingSignOut, errorSignOut] = useSignOut(auth);
   const [user, loading, error] = useAuthState(auth);
   const [userInfo, setUserInfo] = useState<signUpUserInfoTypes | null>(null);
+  const [allUsers, setAllUsers] = useState<any>();
 
   const getUserInformation = async () => {
     if (user) {
@@ -29,6 +30,26 @@ export default function Home() {
       }
     }
   };
+
+  const getingAllUser = async () => {
+    // geting refrense
+    const getingFrindsQuery = query(collection(firestore, "users"));
+    // get data
+    const querySnapshot = await getDocs(getingFrindsQuery);
+
+    let user: any;
+    querySnapshot.forEach((doc) => {
+      user = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    });
+    if (user) {
+      setAllUsers(user);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    getingAllUser();
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -50,10 +71,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Nav />
+      <Nav allUsers={allUsers} />
       <div className="flex justify-between align-middle bg-[#F0F2F5] h-screen">
         <div className="hidden md:w-1/3 md:flex md:justify-start">
-          {userInfo && <Home_left userInfo={userInfo} />}
+          {userInfo && user && <Home_left userInfo={userInfo} user={user} />}
         </div>
         <div className="w-[80%] justify-center md:w-1/2 ml-auto mr-auto overflow-y-scroll ">
           {userInfo && user && (
