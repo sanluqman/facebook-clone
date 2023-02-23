@@ -52,14 +52,14 @@ export default function Home() {
   }, [user]);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/auth");
+    if (user) {
+      getUserInformation();
     }
   }, [user]);
 
   useEffect(() => {
-    if (user) {
-      getUserInformation();
+    if (!user) {
+      router.push("/auth");
     }
   }, [user]);
 
@@ -71,7 +71,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Nav allUsers={allUsers} />
+      <Nav allUsers={allUsers} userInfo={userInfo!} />
       <div className="flex justify-between align-middle bg-[#F0F2F5] h-screen">
         <div className="hidden md:w-1/3 md:flex md:justify-start">
           {userInfo && user && <Home_left userInfo={userInfo} user={user} />}

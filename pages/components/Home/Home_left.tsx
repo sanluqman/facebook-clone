@@ -20,7 +20,7 @@ const Home_left: React.FC<Home_leftProps> = ({ userInfo, user }) => {
     <div className="flex flex-col  p-4 bg-[#F0F2F5] overflow-y-auto">
       <div className="flex justify-start align-middle  p-2 hover:bg-[#E4E6E9]">
         {userInfo.profileimg ? (
-          <img src={userInfo.profileimg} className="text-2xl mr-2" />
+          <img src={userInfo.profileimg} className="w-6 h-6 mr-2 " />
         ) : (
           <CgProfile className="text-2xl mr-2" />
         )}

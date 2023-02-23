@@ -145,6 +145,7 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
     <div className="mb-14">
       {posts &&
         posts.map((post) => {
+          console.log(post);
           return (
             <div
               className="flex flex-col mb-3 mt-3 bg-white rounded-lg p-3 "
@@ -153,7 +154,10 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
               <div className="flex justify-between">
                 <div className="flex">
                   {post.profilrImageUrl ? (
-                    <img src={post.profileName} className="h-9 w-9 mr-2 mt-1" />
+                    <img
+                      src={post.profilrImageUrl}
+                      className="h-9 w-9 mr-2 mt-1"
+                    />
                   ) : (
                     <CgProfile className="text-4xl mr-2 mt-1" />
                   )}

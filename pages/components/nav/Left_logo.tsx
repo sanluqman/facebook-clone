@@ -15,10 +15,14 @@ const NavLogoSearch: React.FC<navLogoSearchProps> = ({ allUsers }) => {
   if (allUsers) {
     filteredUsers = allUsers.filter((user: any) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-      return fullName.includes(searchaUser.toLowerCase());
+      return (
+        fullName.includes(searchaUser.toLowerCase()) ||
+        (user.profileimg &&
+          user.profileimg.toLowerCase().includes(searchaUser.toLowerCase()))
+      );
     });
   }
-
+  console.log(allUsers);
   return (
     <div className="flex justify-start align-middle ml-2 w-1/3  ">
       {showFrindlist ? (
@@ -48,6 +52,7 @@ const NavLogoSearch: React.FC<navLogoSearchProps> = ({ allUsers }) => {
           {filteredUsers &&
             filteredUsers.map((user: any) => {
               // Use the filteredUsers array
+              console.log(user.profileimg);
               return (
                 <Link
                   href={`profile/${user.id}`}
@@ -55,8 +60,8 @@ const NavLogoSearch: React.FC<navLogoSearchProps> = ({ allUsers }) => {
                   key={user.id}
                 >
                   <div className="flex items-center">
-                    {user.profilrImageUrl ? (
-                      <img src={user.profileName} className="h-9 w-9 mr-1" />
+                    {user.profileimg ? (
+                      <img src={user.profileimg} className="h-9 w-9 mr-1" />
                     ) : (
                       <CgProfile className="text-4xl mr-1" />
                     )}
