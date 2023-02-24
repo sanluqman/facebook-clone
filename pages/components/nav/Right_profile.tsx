@@ -12,7 +12,6 @@ type nav_profileProps = {
 const Nav_profile: React.FC<nav_profileProps> = ({ userInfo }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
-  console.log(userInfo);
   return (
     <div className="w-1/3  flex justify-end align-middle ">
       <button
@@ -22,16 +21,17 @@ const Nav_profile: React.FC<nav_profileProps> = ({ userInfo }) => {
         <TbGridDots className="" />
       </button>
       <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} />
-      {userInfo.profileimg ? (
-        <img src={userInfo.profileimg} className="h-9 w-9" alt="" />
-      ) : (
-        <button
-          onClick={() => setOpenProfile((prev) => !prev)}
-          className="bg-[#F0F2F5] rounded-full text-2xl p-1 font-bold mr-2"
-        >
-          <CgProfile />
-        </button>
-      )}
+      {userInfo &&
+        (userInfo.profileimg ? (
+          <img src={userInfo.profileimg} className="h-9 w-9" alt="" />
+        ) : (
+          <button
+            onClick={() => setOpenProfile((prev) => !prev)}
+            className="bg-[#F0F2F5] rounded-full text-2xl p-1 font-bold mr-2"
+          >
+            <CgProfile />
+          </button>
+        ))}
 
       <Profile openProfile={openProfile} setOpenProfile={setOpenProfile} />
     </div>

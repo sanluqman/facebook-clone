@@ -15,6 +15,7 @@ import { GrLike } from "react-icons/gr";
 import { RiShareForwardLine } from "react-icons/ri";
 import Addcomment from "./Addcomment";
 import moment from "moment";
+import addLike from "@/pages/hooks/useAddLike";
 
 type AllcommentsmodelProps = {
   userName: string;
@@ -22,6 +23,9 @@ type AllcommentsmodelProps = {
   postUrl: string;
   postid: string;
   userProfile: string;
+  numberOfComments: number;
+  numberOfLikes: number;
+  useruid: string;
 };
 
 type commentsType = [
@@ -41,6 +45,9 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
   postUrl,
   postid,
   userProfile,
+  numberOfComments,
+  numberOfLikes,
+  useruid,
 }) => {
   const [comments, setComments] = useState<commentsType | null>(null);
   const getPostComments = async () => {
@@ -65,7 +72,6 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
     }
   };
   useEffect(() => {
-    console.log("runing");
     getPostComments();
   }, [postid]);
 
@@ -95,13 +101,13 @@ const Allcommentsmodel: React.FC<AllcommentsmodelProps> = ({
               <img src={postUrl} className="w-full " />
             </div>
             <div className="flex justify-between align-middle p-3">
-              <h1>Likes</h1>
+              <h1>{numberOfLikes && numberOfLikes} Likes</h1>
               <div className="flex ">
-                <h1>0 comments</h1>
+                <h1>{numberOfComments && numberOfComments} comments</h1>
               </div>
             </div>
             <div className="flex justify-around text-gray-500">
-              <div className=" flex ">
+              <div className=" flex " onClick={() => addLike(postid, useruid)}>
                 <GrLike className="text-xl pr-1" /> like
               </div>
               <div className=" flex ">

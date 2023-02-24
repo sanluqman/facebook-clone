@@ -1,4 +1,11 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  increment,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { firestore } from "../firebase";
 
 export default async function addComment(
@@ -16,4 +23,12 @@ export default async function addComment(
     createdAt: serverTimestamp(),
   });
   console.log("Document written with ID: ", docRef.id);
+
+  const updateDocRef = doc(firestore, "posts", `${postid}`);
+
+  updateDoc(updateDocRef, {
+    numberOfComments: increment(1),
+  }).then(() => {
+    console.log("updated number Of Comments");
+  });
 }

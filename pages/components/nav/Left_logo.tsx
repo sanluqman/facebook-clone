@@ -51,8 +51,6 @@ const NavLogoSearch: React.FC<navLogoSearchProps> = ({ allUsers }) => {
           </div>
           {filteredUsers &&
             filteredUsers.map((user: any) => {
-              // Use the filteredUsers array
-              console.log(user.profileimg);
               return (
                 <Link
                   href={`profile/${user.id}`}

@@ -6,12 +6,6 @@ import {
   Timestamp,
   orderBy,
   limit,
-  addDoc,
-  updateDoc,
-  doc,
-  increment,
-  deleteDoc,
-  onSnapshot,
 } from "firebase/firestore";
 import { CgProfile } from "react-icons/cg";
 import { GrLike } from "react-icons/gr";
@@ -21,6 +15,7 @@ import { User } from "firebase/auth";
 import Addcomment from "../comment/Addcomment";
 import moment from "moment";
 import Allcommentsmodel from "../comment/Allcommentsmodel";
+import addLike from "@/pages/hooks/useAddLike";
 
 type PostsProps = {
   firestore: any;
@@ -49,74 +44,25 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
   const [postUrl, setPostUrl] = useState("");
   const [postid, setPostid] = useState("");
   const [userProfile, setUserProfile] = useState("");
+  const [numberOfComments, setNumberOfComments] = useState(0);
+  const [numberOfLikes, setNumberOfLikes] = useState(0);
 
   const openingCommentDetailModel = (
     postUserName: string,
     postImage: string,
     postid: string,
-    userProfile: string
+    userProfile: string,
+    numberOfComments: number,
+    numberOfLikes: number
   ) => {
     setUserName(postUserName);
     setPostUrl(postImage);
     setPostid(postid);
     setUserProfile(userProfile);
+    setNumberOfComments(numberOfComments);
+    setNumberOfLikes(numberOfLikes);
 
     setOpenCommentsModel((prev) => !prev);
-  };
-
-  const onLikePost = async (postid: string) => {
-    // geting refrense
-    const getingPostQuery = query(
-      collection(firestore, "users", user.uid, "likes")
-    );
-    // get data
-    const querySnapshot = await getDocs(getingPostQuery);
-
-    let post: any;
-    querySnapshot.forEach((doc) => {
-      post = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    });
-
-    let likedpostid;
-    if (post) {
-      post.filter((likedPost: any) => {
-        if (likedPost.likedPost === postid) {
-          likedpostid = likedPost;
-        }
-      });
-    }
-
-    const updateDocRef = doc(firestore, "posts", postid);
-
-    if (likedpostid) {
-      // delete likes
-      const deleteDocRef = doc(
-        firestore,
-        `users/${user.uid}/likes`,
-        likedpostid.id
-      );
-
-      deleteDoc(deleteDocRef).then(() => {
-        console.log("deleted");
-      });
-
-      updateDoc(updateDocRef, {
-        numberOfLikes: increment(-1),
-      }).then(() => {
-        console.log("remove like");
-      });
-    } else {
-      // add likes
-      await addDoc(collection(firestore, "users", user.uid, "likes"), {
-        likedPost: postid,
-      });
-
-      updateDoc(updateDocRef, {
-        numberOfLikes: increment(1),
-      }).then(() => {
-        console.log("updated");
-      });
-    }
   };
 
   const getHomePagePosts = async () => {
@@ -140,12 +86,10 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
   useEffect(() => {
     getHomePagePosts();
   }, []);
-
   return (
     <div className="mb-14">
       {posts &&
         posts.map((post) => {
-          console.log(post);
           return (
             <div
               className="flex flex-col mb-3 mt-3 bg-white rounded-lg p-3 "
@@ -192,7 +136,9 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                       post.profileName,
                       post.imageURL,
                       post.id,
-                      post.profilrImageUrl
+                      post.profilrImageUrl,
+                      post.numberOfComments,
+                      post.numberOfLikes
                     )
                   }
                 >
@@ -204,7 +150,10 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
               </div>
               <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
               <div className="flex justify-around text-gray-500">
-                <div className=" flex " onClick={() => onLikePost(post.id)}>
+                <div
+                  className=" flex "
+                  onClick={() => addLike(post.id, user.uid)}
+                >
                   <GrLike className="text-xl pr-1" /> like
                 </div>
                 <div className=" flex ">
@@ -221,7 +170,9 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
                       post.profileName,
                       post.imageURL,
                       post.id,
-                      post.profilrImageUrl
+                      post.profilrImageUrl,
+                      post.numberOfComments,
+                      post.numberOfLikes
                     )
                   }
                 >
@@ -244,6 +195,9 @@ const Posts: React.FC<PostsProps> = ({ firestore, user }) => {
           postUrl={postUrl}
           postid={postid}
           userProfile={userProfile}
+          numberOfComments={numberOfComments}
+          numberOfLikes={numberOfLikes}
+          useruid={user.uid}
         />
       )}
     </div>

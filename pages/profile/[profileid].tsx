@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../firebase";
+import {
+  DocumentData,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
+import { auth, firestore } from "../firebase";
 import ProfileImage from "../components/userDetail/ProfileImage";
-import Intro from "../components/userDetail/intro";
-import Photos from "../components/userDetail/photos";
+import Intro from "../components/userDetail/Intro";
+import Photos from "../components/userDetail/Photos";
 import Friends from "../components/userDetail/Friends";
 import Posts from "../components/userDetail/Posts";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type singlePageUserDataType = {
   firstName: string;
@@ -18,6 +26,13 @@ type singlePageUserDataType = {
   friendsNumber: number;
   profileimg: string;
   coverimg: string;
+} & DocumentData;
+
+type friendidtype = {
+  friendProfileImg: string;
+  friendid: string;
+  friendname: string;
+  id: string;
 };
 
 type indexProps = {
@@ -25,10 +40,43 @@ type indexProps = {
 };
 
 const index: React.FC<indexProps> = ({ singlePageUserData }) => {
+  const [friendid, setFriendid] = useState<friendidtype | null>(null);
+  const userfullname = `${
+    (singlePageUserData[1] as singlePageUserDataType).firstName
+  } ${(singlePageUserData[1] as singlePageUserDataType).lastName}`;
+
+  const [user] = useAuthState(auth);
   if (!singlePageUserData) {
     return <h1>no user</h1>;
   }
-  const userfullname = `${singlePageUserData[1].firstName} ${singlePageUserData[1].lastName}`;
+
+  const checkifFriend = async () => {
+    const getingPostQuery = query(
+      collection(firestore, "users", user!.uid, "friends")
+    );
+    // get data
+    const querySnapshot = await getDocs(getingPostQuery);
+
+    let friend: any;
+    querySnapshot.forEach((doc) => {
+      friend = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    });
+
+    if (friend) {
+      friend.filter((fid: any) => {
+        if (fid.friendid === singlePageUserData[0]) {
+          setFriendid(fid);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      checkifFriend();
+    }
+  }, [user]);
+
   return (
     <div className="flex flex-col">
       <ProfileImage
@@ -36,6 +84,7 @@ const index: React.FC<indexProps> = ({ singlePageUserData }) => {
         profileimg={singlePageUserData[1].profileimg}
         username={userfullname}
         userid={singlePageUserData[0]}
+        ifAdded={!!friendid}
       />
       <div className="flex">
         <div className="flex flex-col">
