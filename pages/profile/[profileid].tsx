@@ -78,15 +78,17 @@ const index: React.FC<indexProps> = ({ singlePageUserData }) => {
   }, [user]);
 
   return (
-    <div className="flex flex-col">
-      <ProfileImage
-        coverimg={singlePageUserData[1].coverimg}
-        profileimg={singlePageUserData[1].profileimg}
-        username={userfullname}
-        userid={singlePageUserData[0]}
-        ifAdded={!!friendid}
-      />
-      <div className="flex">
+    <div className="flex flex-col  ">
+      <div className="">
+        <ProfileImage
+          coverimg={singlePageUserData[1].coverimg}
+          profileimg={singlePageUserData[1].profileimg}
+          username={userfullname}
+          userid={singlePageUserData[0]}
+          ifAdded={!!friendid}
+        />
+      </div>
+      <div className="flex justify-center bg-gray-400 mt-20">
         <div className="flex flex-col">
           <Intro />
           <Photos />

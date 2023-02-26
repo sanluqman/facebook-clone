@@ -24,7 +24,9 @@ const Home_left: React.FC<Home_leftProps> = ({ userInfo, user }) => {
         ) : (
           <CgProfile className="text-2xl mr-2" />
         )}
-        <h1 className="font-medium">{userName}</h1>
+        <Link href={`profile/${user.uid}`}>
+          <h1 className="font-medium">{userName}</h1>
+        </Link>
       </div>
       <Link
         href="/friends"

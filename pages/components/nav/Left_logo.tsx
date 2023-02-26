@@ -22,7 +22,7 @@ const NavLogoSearch: React.FC<navLogoSearchProps> = ({ allUsers }) => {
       );
     });
   }
-  console.log(allUsers);
+
   return (
     <div className="flex justify-start align-middle ml-2 w-1/3  ">
       {showFrindlist ? (
